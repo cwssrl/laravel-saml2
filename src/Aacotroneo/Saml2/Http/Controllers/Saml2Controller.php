@@ -52,6 +52,23 @@ class Saml2Controller extends Controller
         }
         $user = $this->saml2Auth->getSaml2User();
 
+        if (config('saml2_settings.redirectByCode')) {
+            $userData = [
+                'id' => $user->getUserId(),
+                'attributes' => $user->getAttributes(),
+                'assertion' => $user->getRawSamlAssertion()
+            ];
+
+            \Log::debug("User id from saml " . $userData["id"]);
+
+            $dbUser = User::query()->where('email', 'ilike', $userData["id"])->firstOrFail();
+
+            $userRepo = app('App\Repositories\User\EloquentUserRepository');
+            $code = $userRepo->apiLogin($dbUser->id);
+            \Log::debug("Code: " . $code);
+            return redirect((config("isp.authentication.redirect_login_base_url") . $code));
+        }
+
         event(new Saml2LoginEvent($user, $this->saml2Auth));
 
         $redirectUrl = $user->getIntendedUrl();
@@ -59,7 +76,6 @@ class Saml2Controller extends Controller
         if ($redirectUrl !== null) {
             return redirect($redirectUrl);
         } else {
-
             return redirect(config('saml2_settings.loginRoute'));
         }
     }

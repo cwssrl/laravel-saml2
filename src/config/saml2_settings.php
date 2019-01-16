@@ -48,7 +48,10 @@ return $settings = array(
      */
     'errorRoute' => '/',
 
-
+    /**
+     * Indicate whether to use login with redirect with code or not
+     */
+    'redirectByCode' => false,
 
 
     /*****
