@@ -6,6 +6,7 @@ use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 use Aacotroneo\Saml2\Saml2Auth;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 
 class Saml2Controller extends Controller
